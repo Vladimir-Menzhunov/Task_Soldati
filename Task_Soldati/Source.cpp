@@ -1,12 +1,13 @@
 ﻿#include<iostream>
 #include<vector>
 #include<cassert>
+#include <algorithm>
 
 using namespace std;
 
 enum state { NEW, DURING, VISITED };
 
-void visit(int cur, const vector<vector<int>> &less, vector<int> &state, bool &resolution)
+void visit(int cur, const vector<vector<int>> &less, vector<int> &state, bool &resolution, vector<int> &build)
 {
 	if (state[cur] == DURING)
 	{
@@ -20,10 +21,14 @@ void visit(int cur, const vector<vector<int>> &less, vector<int> &state, bool &r
 	assert(state[cur] == NEW);
 	state[cur] = DURING;
 	for (int next : less[cur]) {
-		visit(next, less, state, resolution);
+		
+		visit(next, less, state, resolution, build);
+		
 	}
 	assert(state[cur] == DURING);
+	build.push_back(cur);
 	state[cur] = VISITED;
+
 }
 
 
@@ -36,6 +41,8 @@ int main()
 	cin >> numR;
 
 	vector<vector<int>> less(1 + numV);
+
+	vector<int> build;
 
 	for (int i = 0; i < numR; i++)
 	{
@@ -56,13 +63,18 @@ int main()
 	{
 		if (state[i] == NEW)
 		{
-			visit(i, less, state, resolution);
+			visit(i, less, state, resolution, build);
 		}
 	}
 	if (resolution)
 	{
-		cout << "YES";
-
+		cout << "YES" << endl;
+		reverse(build.begin(), build.end());
+		for (int num : build)
+		{
+			cout << num << " ";
+		}
+		cout << endl;
 	}
 	else
 	{
